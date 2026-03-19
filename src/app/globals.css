@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0F0E17;
+  --surface: #1A1927;
+  --border: #2D2B42;
+  --text-primary: #E8E6F0;
+  --text-secondary: #8B89A0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: 'Pretendard', 'Apple SD Gothic Neo', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 스크롤바 스타일 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+/* SSE 스트리밍 커서 애니메이션 */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.streaming-cursor::after {
+  content: '▋';
+  display: inline-block;
+  animation: cursor-blink 0.7s infinite;
+  color: #534AB7;
+  margin-left: 2px;
+}
+
+/* 점수 바 애니메이션 */
+@keyframes score-fill {
+  from { width: 0%; }
+  to { width: var(--target-width); }
+}
+
+.score-bar-fill {
+  animation: score-fill 0.6s ease-out forwards;
+}
