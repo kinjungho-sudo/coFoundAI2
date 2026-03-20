@@ -7,7 +7,7 @@ import { validateScore } from "@/lib/score-engine";
 import { STEP_METADATA } from "@/types";
 import type { Message, ScoreItem } from "@/types";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {

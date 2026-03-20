@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase";
 
+export const runtime = "edge";
+
 // POST /api/interview/session — 새 세션 생성
 export async function POST() {
   const supabase = await createServerSupabaseClient();

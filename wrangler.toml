@@ -1,0 +1,9 @@
+name = "cofound-ai"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Cloudflare Pages 설정
+pages_build_output_dir = ".vercel/output/static"
+
+[vars]
+NEXT_PUBLIC_APP_URL = "https://cofound-ai.pages.dev"

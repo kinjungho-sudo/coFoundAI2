@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient, createServiceRoleClient } from "@/lib/supabase";
 import { CREDIT_PACKAGES } from "@/types";
 
+export const runtime = "edge";
+
 const TOSS_CONFIRM_URL = "https://api.tosspayments.com/v1/payments/confirm";
 
 export async function POST(req: NextRequest) {
@@ -56,8 +58,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "결제 서버 설정 오류입니다." }, { status: 500 });
   }
 
-  // 2. TossPayments 서버 검증
-  const encryptedSecretKey = Buffer.from(`${secretKey}:`).toString("base64");
+  // 2. TossPayments 서버 검증 (btoa — Edge runtime 호환)
+  const encryptedSecretKey = btoa(`${secretKey}:`);
 
   const tossRes = await fetch(TOSS_CONFIRM_URL, {
     method: "POST",

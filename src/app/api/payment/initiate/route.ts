@@ -3,6 +3,8 @@ import { createServerSupabaseClient } from "@/lib/supabase";
 import { CREDIT_PACKAGES } from "@/types";
 import type { CreditPackage } from "@/types";
 
+export const runtime = "edge";
+
 export async function POST(req: NextRequest) {
   const supabase = await createServerSupabaseClient();
 

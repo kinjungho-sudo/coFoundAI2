@@ -6,7 +6,7 @@ import type { Message, ScoreDimension } from "@/types";
 
 const BUSINESS_PLAN_CREDIT_COST = 1;
 
-export const maxDuration = 120;
+export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
   const supabase = await createServerSupabaseClient();

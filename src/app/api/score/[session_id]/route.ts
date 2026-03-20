@@ -3,6 +3,8 @@ import { createServerSupabaseClient } from "@/lib/supabase";
 import { buildScoreBoard } from "@/lib/score-engine";
 import type { ScoreDimension } from "@/types";
 
+export const runtime = "edge";
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ session_id: string }> }
