@@ -12,7 +12,7 @@ import type { Message, ScoreBoard, ScoreDimension, ScoreItem } from "@/types";
 const INITIAL_AI_MESSAGE: Message = {
   step: 1,
   role: "ai",
-  content: "안녕하세요. 저는 AI 공동창업자입니다. 지금 해결하고 싶은 문제가 뭔가요?",
+  content: "안녕하세요. 저는 AI 창업 멘토, Foal AI입니다. 지금 해결하고 싶은 문제가 뭔가요?",
   timestamp: new Date().toISOString(),
 };
 
@@ -236,9 +236,9 @@ export default function InterviewPage() {
       <header className="flex items-center justify-between px-6 py-4 border-b border-[#2D2B42] bg-[#1A1927]">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-[#534AB7] flex items-center justify-center">
-            <span className="text-white text-xs font-bold">C</span>
+            <span className="text-white text-xs font-bold">F</span>
           </div>
-          <span className="font-semibold text-[#E8E6F0]">CoFound AI</span>
+          <span className="font-semibold text-[#E8E6F0]">Foal AI</span>
           {interviewComplete && (
             <span className="text-xs bg-[#1D9E75] text-white px-2 py-0.5 rounded-full">
               인터뷰 완료
@@ -264,7 +264,7 @@ export default function InterviewPage() {
                   : "text-[#8B89A0] hover:text-[#E8E6F0]"
               }`}
             >
-              공동창업자 모드
+              창업 멘토 모드
             </button>
             <button
               onClick={() => setMode("devil")}
@@ -284,7 +284,7 @@ export default function InterviewPage() {
               <div className="flex-1 overflow-y-auto p-6">
                 {/* 진행 단계 표시 */}
                 <div className="flex gap-1 mb-6">
-                  {Array.from({ length: 8 }, (_, i) => i + 1).map((step) => (
+                  {Array.from({ length: 9 }, (_, i) => i + 1).map((step) => (
                     <div
                       key={step}
                       className={`flex-1 h-1 rounded-full transition-colors duration-300 ${
@@ -338,7 +338,7 @@ export default function InterviewPage() {
                 placeholder={
                   interviewComplete
                     ? "인터뷰가 완료되었습니다. 점수를 확인하세요."
-                    : `STEP ${currentStep}/8 — 답변을 입력하세요...`
+                    : `STEP ${currentStep}/9 — 답변을 입력하세요...`
                 }
               />
             </>

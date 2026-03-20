@@ -4,7 +4,7 @@ import { anthropic, MODEL, getBusinessPlanSystemPrompt } from "@/lib/claude";
 import { buildScoreBoard } from "@/lib/score-engine";
 import type { Message, ScoreDimension } from "@/types";
 
-const BUSINESS_PLAN_CREDIT_COST = 1;
+const BUSINESS_PLAN_CREDIT_COST = 2;
 
 export const runtime = "edge";
 
@@ -51,19 +51,32 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // 3. 크레딧 차감 (원자적 트랜잭션 — DB 함수 호출)
+  // 3. 얼리버드 여부 확인 후 크레딧 차감
   const serviceClient = createServiceRoleClient();
 
-  const { data: deductResult, error: deductError } = await serviceClient.rpc("deduct_credit", {
-    p_user_id: user.id,
-    p_amount: BUSINESS_PLAN_CREDIT_COST,
-  });
+  const { data: creditRow } = await serviceClient
+    .from("credits")
+    .select("earlybird_expires_at")
+    .eq("user_id", user.id)
+    .single();
 
-  if (deductError || !deductResult) {
-    return NextResponse.json(
-      { error: "크레딧이 부족하거나 차감에 실패했습니다." },
-      { status: 402 }
-    );
+  const isEarlybird =
+    creditRow?.earlybird_expires_at !== null &&
+    creditRow?.earlybird_expires_at !== undefined &&
+    new Date(creditRow.earlybird_expires_at) > new Date();
+
+  if (!isEarlybird) {
+    const { data: deductResult, error: deductError } = await serviceClient.rpc("deduct_credit", {
+      p_user_id: user.id,
+      p_amount: BUSINESS_PLAN_CREDIT_COST,
+    });
+
+    if (deductError || !deductResult) {
+      return NextResponse.json(
+        { error: "크레딧이 부족합니다. 충전 후 이용해주세요." },
+        { status: 402 }
+      );
+    }
   }
 
   // 4. 인터뷰 내용 요약 구성
@@ -105,21 +118,12 @@ export async function POST(req: NextRequest) {
   }
 
   if (!content) {
-    // 크레딧 롤백 — 차감 전 잔액 조회 후 복구
-    const { data: currentCredit } = await serviceClient
-      .from("credits")
-      .select("balance")
-      .eq("user_id", user.id)
-      .single();
-
-    if (currentCredit) {
-      await serviceClient
-        .from("credits")
-        .update({
-          balance: currentCredit.balance + BUSINESS_PLAN_CREDIT_COST,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("user_id", user.id);
+    // 크레딧 롤백 (얼리버드 아닌 경우만)
+    if (!isEarlybird) {
+      await serviceClient.rpc("add_credit", {
+        p_user_id: user.id,
+        p_amount: BUSINESS_PLAN_CREDIT_COST,
+      });
     }
 
     return NextResponse.json({ error: "사업계획서 생성에 실패했습니다." }, { status: 500 });
@@ -145,6 +149,6 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     id: output?.id,
     content,
-    credits_used: BUSINESS_PLAN_CREDIT_COST,
+    credits_used: isEarlybird ? 0 : BUSINESS_PLAN_CREDIT_COST,
   });
 }

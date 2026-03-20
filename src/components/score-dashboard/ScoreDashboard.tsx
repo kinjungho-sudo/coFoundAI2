@@ -130,23 +130,23 @@ export default function ScoreDashboard({
             61점 이상이면 사업계획서를 생성할 수 있습니다
           </p>
         )}
-        {canGenerate && creditBalance === 0 && (
+        {canGenerate && creditBalance < 2 && (
           <p className="text-xs text-[#F5A623] text-center mb-2">
-            크레딧이 필요합니다 (1 크레딧)
+            크레딧이 부족합니다 (2 크레딧 필요)
           </p>
         )}
         <button
           onClick={onGeneratePlan}
-          disabled={!canGenerate || isGenerating || creditBalance < 1}
+          disabled={!canGenerate || isGenerating || creditBalance < 2}
           className={`w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
-            canGenerate && creditBalance >= 1
+            canGenerate && creditBalance >= 2
               ? "bg-[#534AB7] hover:bg-[#6259c7] text-white cursor-pointer"
               : "bg-[#2D2B42] text-[#8B89A0] cursor-not-allowed"
           }`}
         >
           {isGenerating ? "생성 중..." : "사업계획서 생성"}
-          {canGenerate && creditBalance >= 1 && (
-            <span className="ml-1 text-xs opacity-70">(1 크레딧)</span>
+          {canGenerate && creditBalance >= 2 && (
+            <span className="ml-1 text-xs opacity-70">(2 크레딧)</span>
           )}
         </button>
       </div>

@@ -31,18 +31,21 @@ export interface Database {
           id: string;
           user_id: string;
           balance: number;
+          earlybird_expires_at: string | null;
           updated_at: string;
         };
         Insert: {
           id?: string;
           user_id: string;
           balance?: number;
+          earlybird_expires_at?: string | null;
           updated_at?: string;
         };
         Update: {
           id?: string;
           user_id?: string;
           balance?: number;
+          earlybird_expires_at?: string | null;
           updated_at?: string;
         };
       };
@@ -80,7 +83,7 @@ export interface Database {
           id: string;
           user_id: string;
           session_id: string;
-          type: "business_plan" | "gov_match" | "interview_analysis" | "landing_copy";
+          type: "business_plan" | "gov_match" | "interview_analysis" | "landing_copy" | "jtbd_analysis" | "business_plan_review";
           content: string | null;
           credits_used: number | null;
           created_at: string;
@@ -88,8 +91,8 @@ export interface Database {
         Insert: {
           id?: string;
           user_id: string;
-          session_id: string;
-          type: "business_plan" | "gov_match" | "interview_analysis" | "landing_copy";
+          session_id?: string | null;
+          type: "business_plan" | "gov_match" | "interview_analysis" | "landing_copy" | "jtbd_analysis" | "business_plan_review";
           content?: string | null;
           credits_used?: number | null;
           created_at?: string;
@@ -97,8 +100,8 @@ export interface Database {
         Update: {
           id?: string;
           user_id?: string;
-          session_id?: string;
-          type?: "business_plan" | "gov_match" | "interview_analysis" | "landing_copy";
+          session_id?: string | null;
+          type?: "business_plan" | "gov_match" | "interview_analysis" | "landing_copy" | "jtbd_analysis" | "business_plan_review";
           content?: string | null;
           credits_used?: number | null;
           created_at?: string;

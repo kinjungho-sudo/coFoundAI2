@@ -1,4 +1,4 @@
--- CoFound AI 데이터베이스 스키마
+-- Foal AI 데이터베이스 스키마
 -- Supabase SQL Editor에서 실행하세요.
 
 -- 크레딧 (RLS 필수)
@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS credits (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE UNIQUE,
   balance INTEGER DEFAULT 0 CHECK (balance >= 0),
+  earlybird_expires_at TIMESTAMPTZ DEFAULT NULL,  -- 얼리버드: 3개월 무료 만료일
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -24,8 +25,11 @@ CREATE TABLE IF NOT EXISTS interview_sessions (
 CREATE TABLE IF NOT EXISTS outputs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  session_id UUID REFERENCES interview_sessions(id),
-  type TEXT NOT NULL CHECK (type IN ('business_plan', 'gov_match', 'interview_analysis', 'landing_copy')),
+  session_id UUID REFERENCES interview_sessions(id),  -- business_plan_review 의 경우 NULL 허용
+  type TEXT NOT NULL CHECK (type IN (
+    'business_plan', 'gov_match', 'interview_analysis', 'landing_copy',
+    'jtbd_analysis', 'business_plan_review'
+  )),
   content TEXT,
   credits_used INTEGER,
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -59,12 +63,27 @@ CREATE POLICY IF NOT EXISTS "users_own_sessions" ON interview_sessions
 CREATE POLICY IF NOT EXISTS "users_own_outputs" ON outputs
   FOR ALL USING (auth.uid() = user_id);
 
--- 신규 유저 크레딧 자동 생성 트리거
+-- 신규 유저 크레딧 자동 생성 트리거 (얼리버드 500명 슬롯 포함)
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
+DECLARE
+  earlybird_count INTEGER;
+  earlybird_exp TIMESTAMPTZ;
 BEGIN
-  INSERT INTO credits (user_id, balance)
-  VALUES (NEW.id, 0)
+  -- 현재 유효한 얼리버드 수 확인
+  SELECT COUNT(*) INTO earlybird_count
+  FROM credits
+  WHERE earlybird_expires_at IS NOT NULL;
+
+  -- 500명 미만이면 얼리버드 혜택 부여 (3개월 무료)
+  IF earlybird_count < 500 THEN
+    earlybird_exp := NOW() + INTERVAL '3 months';
+  ELSE
+    earlybird_exp := NULL;
+  END IF;
+
+  INSERT INTO credits (user_id, balance, earlybird_expires_at)
+  VALUES (NEW.id, 0, earlybird_exp)
   ON CONFLICT (user_id) DO NOTHING;
   RETURN NEW;
 END;

@@ -45,8 +45,8 @@ export async function POST(req: NextRequest) {
 
   const { session_id, step, message } = body;
 
-  if (!session_id || typeof step !== "number" || step < 1 || step > 8) {
-    return NextResponse.json({ error: "session_id와 step(1-8)이 필요합니다." }, { status: 400 });
+  if (!session_id || typeof step !== "number" || step < 1 || step > 9) {
+    return NextResponse.json({ error: "session_id와 step(1-9)이 필요합니다." }, { status: 400 });
   }
 
   const { ok, filtered, error: filterError } = validateAndFilter(message, { maxLen: 2000 });
@@ -188,7 +188,7 @@ export async function POST(req: NextRequest) {
             .update({
               messages: messages as unknown as import("@/lib/database.types").Json,
               scores: scores as unknown as import("@/lib/database.types").Json,
-              status: step >= 8 ? "completed" : "in_progress",
+              status: step >= 9 ? "completed" : "in_progress",
               updated_at: new Date().toISOString(),
             })
             .eq("id", session_id);
@@ -198,8 +198,8 @@ export async function POST(req: NextRequest) {
       // 10. 완료 이벤트
       await sendEvent("done", {
         step_complete: true,
-        next_step: step < 8 ? step + 1 : null,
-        interview_complete: step >= 8,
+        next_step: step < 9 ? step + 1 : null,
+        interview_complete: step >= 9,
       });
     } catch (err) {
       console.error("[interview/message] error:", err);
