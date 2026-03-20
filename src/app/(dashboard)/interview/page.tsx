@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
@@ -7,7 +9,23 @@ import ChatBubble from "@/components/chat/ChatBubble";
 import ChatInput from "@/components/chat/ChatInput";
 import ScoreDashboard from "@/components/score-dashboard/ScoreDashboard";
 import CreditBadge from "@/components/credit/CreditBadge";
-import type { Message, ScoreBoard, ScoreDimension, ScoreItem } from "@/types";
+import type { Message, ScoreBoard, ScoreDimension, ScoreItem, JTBDAnalysis } from "@/types";
+
+const DIMENSION_LABELS: Record<ScoreDimension, string> = {
+  target_customer: "타겟 고객",
+  pain_point: "페인포인트",
+  differentiation: "차별점",
+  founder_fit: "창업자 적합성",
+  feasibility: "실행 가능성",
+};
+
+const IMPROVEMENT_TIPS: Record<ScoreDimension, string> = {
+  target_customer: "특정 인물 1명을 구체화하세요. '30대 직장인'이 아니라 '퇴사 후 창업 준비 중인 35세 전 IT 기획자'처럼.",
+  pain_point: "지금 이 문제로 돈을 내는 사람 3명을 찾아 직접 인터뷰하세요. 실제 지출이 없다면 가상의 문제일 수 있습니다.",
+  differentiation: "기존 방법 대비 10배 나은 점을 수치로 표현하세요. '편하다'보다 '3시간 → 10분'처럼 측정 가능한 비교로.",
+  founder_fit: "'왜 내가 해야 하는가'를 한 단락으로 써보세요. 경력·경험·네트워크 중 이 문제와 연결되는 것을 찾으세요.",
+  feasibility: "이번 주 안에 할 수 있는 한 가지 행동을 지금 바로 정하세요. '고객 3명에게 연락하기'처럼 오늘 시작 가능한 것으로.",
+};
 
 const INITIAL_AI_MESSAGE: Message = {
   step: 1,
@@ -36,6 +54,8 @@ export default function InterviewPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [mode, setMode] = useState<"cofounder" | "devil">("cofounder");
   const [interviewComplete, setInterviewComplete] = useState(false);
+  const [jtbdData, setJtbdData] = useState<JTBDAnalysis | null>(null);
+  const [isGeneratingJTBD, setIsGeneratingJTBD] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -77,6 +97,28 @@ export default function InterviewPage() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streamingText]);
 
+  // JTBD 자동 생성 (인터뷰 완료 시)
+  useEffect(() => {
+    if (!interviewComplete || !sessionId || jtbdData || isGeneratingJTBD) return;
+    setIsGeneratingJTBD(true);
+
+    (async () => {
+      try {
+        const res = await fetch("/api/output/jtbd-analysis", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_id: sessionId }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setJtbdData(data.jtbd);
+        }
+      } finally {
+        setIsGeneratingJTBD(false);
+      }
+    })();
+  }, [interviewComplete, sessionId]);
+
   const handleSend = useCallback(
     async (userInput: string) => {
       if (!sessionId || isStreaming) return;
@@ -107,18 +149,20 @@ export default function InterviewPage() {
         });
 
         if (!res.ok) {
-          const err = await res.json();
-          if (res.status === 429) {
-            setMessages((prev) => [
-              ...prev,
-              {
-                step: currentStep,
-                role: "ai",
-                content: err.error || "잠시 후 다시 시도해주세요.",
-                timestamp: new Date().toISOString(),
-              },
-            ]);
-          }
+          let errMsg = "오류가 발생했습니다. 다시 시도해주세요.";
+          try {
+            const err = await res.json();
+            errMsg = err.error || errMsg;
+          } catch {}
+          setMessages((prev) => [
+            ...prev,
+            {
+              step: currentStep,
+              role: "ai",
+              content: `⚠️ ${errMsg}`,
+              timestamp: new Date().toISOString(),
+            },
+          ]);
           setIsStreaming(false);
           return;
         }
@@ -144,7 +188,17 @@ export default function InterviewPage() {
             const event = eventLine.replace("event:", "").trim();
             const data = JSON.parse(dataLine.replace("data:", "").trim());
 
-            if (event === "chunk") {
+            if (event === "error") {
+              setMessages((prev) => [
+                ...prev,
+                {
+                  step: currentStep,
+                  role: "ai",
+                  content: `⚠️ ${data.message || "오류가 발생했습니다."}`,
+                  timestamp: new Date().toISOString(),
+                },
+              ]);
+            } else if (event === "chunk") {
               aiText += data.text;
               setStreamingText(aiText);
             } else if (event === "score") {
@@ -219,7 +273,7 @@ export default function InterviewPage() {
 
       if (res.ok) {
         const { id } = await res.json();
-        setCreditBalance((prev) => prev - 1);
+        setCreditBalance((prev) => prev - 2);
         router.push(`/output?id=${id}`);
       } else {
         const err = await res.json();
@@ -279,6 +333,16 @@ export default function InterviewPage() {
           </div>
 
           {mode === "cofounder" ? (
+            interviewComplete ? (
+              <CompletionPanel
+                scoreBoard={scoreBoard}
+                jtbdData={jtbdData}
+                isGeneratingJTBD={isGeneratingJTBD}
+                onGeneratePlan={handleGeneratePlan}
+                isGenerating={isGenerating}
+                creditBalance={creditBalance}
+              />
+            ) : (
             <>
               {/* 채팅 메시지 */}
               <div className="flex-1 overflow-y-auto p-6">
@@ -334,14 +398,11 @@ export default function InterviewPage() {
               {/* 입력창 */}
               <ChatInput
                 onSend={handleSend}
-                disabled={isStreaming || interviewComplete}
-                placeholder={
-                  interviewComplete
-                    ? "인터뷰가 완료되었습니다. 점수를 확인하세요."
-                    : `STEP ${currentStep}/9 — 답변을 입력하세요...`
-                }
+                disabled={isStreaming}
+                placeholder={`STEP ${currentStep}/9 — 답변을 입력하세요...`}
               />
             </>
+            )
           ) : (
             <DevilAdvocatePanel sessionId={sessionId} />
           )}
@@ -356,6 +417,146 @@ export default function InterviewPage() {
             creditBalance={creditBalance}
           />
         </div>
+      </div>
+    </div>
+  );
+}
+
+// 인터뷰 완료 패널 (인라인 컴포넌트)
+function CompletionPanel({
+  scoreBoard,
+  jtbdData,
+  isGeneratingJTBD,
+  onGeneratePlan,
+  isGenerating,
+  creditBalance,
+}: {
+  scoreBoard: Partial<ScoreBoard>;
+  jtbdData: JTBDAnalysis | null;
+  isGeneratingJTBD: boolean;
+  onGeneratePlan: () => void;
+  isGenerating: boolean;
+  creditBalance: number;
+}) {
+  const total = scoreBoard.total ?? 0;
+  const level = scoreBoard.level ?? "need_work";
+  const items = scoreBoard.items ?? ({} as Record<ScoreDimension, ScoreItem>);
+
+  const levelConfig = {
+    excellent: { label: "탁월한 창업 아이디어", color: "text-[#1D9E75]", border: "border-[#1D9E75]/30", bg: "bg-[#1D9E75]/10" },
+    good: { label: "유망한 창업 아이디어", color: "text-[#534AB7]", border: "border-[#534AB7]/30", bg: "bg-[#534AB7]/10" },
+    need_work: { label: "보완이 필요한 단계", color: "text-[#F5A623]", border: "border-[#F5A623]/30", bg: "bg-[#F5A623]/10" },
+  };
+  const cfg = levelConfig[level];
+  const dimensions = Object.keys(DIMENSION_LABELS) as ScoreDimension[];
+
+  return (
+    <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      {/* 종합 점수 카드 */}
+      <div className={`rounded-2xl border p-6 ${cfg.bg} ${cfg.border}`}>
+        <p className="text-xs text-[#8B89A0] mb-2">9단계 인터뷰 완료 · 종합 점수</p>
+        <div className="flex items-baseline gap-2 mb-1">
+          <span className={`text-6xl font-bold ${cfg.color}`}>{total}</span>
+          <span className="text-[#8B89A0] text-xl">/100</span>
+        </div>
+        <span className={`text-sm font-semibold ${cfg.color}`}>{cfg.label}</span>
+      </div>
+
+      {/* 차원별 점수 */}
+      <div>
+        <h3 className="text-sm font-semibold text-[#E8E6F0] mb-3">차원별 평가 결과</h3>
+        <div className="space-y-3">
+          {dimensions.map((dim) => {
+            const item = items[dim];
+            const score = item?.score ?? 0;
+            const needsWork = score < 11;
+            return (
+              <div key={dim} className="bg-[#1A1927] border border-[#2D2B42] rounded-xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-[#E8E6F0]">{DIMENSION_LABELS[dim]}</span>
+                  <span className={`text-sm font-bold ${needsWork ? "text-[#F5A623]" : "text-[#1D9E75]"}`}>
+                    {score}/20
+                  </span>
+                </div>
+                <div className="w-full h-1.5 bg-[#2D2B42] rounded-full mb-2">
+                  <div
+                    className={`h-1.5 rounded-full transition-all duration-700 ${needsWork ? "bg-[#F5A623]" : "bg-[#1D9E75]"}`}
+                    style={{ width: `${(score / 20) * 100}%` }}
+                  />
+                </div>
+                {item?.feedback && (
+                  <p className="text-xs text-[#8B89A0] mb-1">{item.feedback}</p>
+                )}
+                {needsWork && IMPROVEMENT_TIPS[dim] && (
+                  <div className="mt-2 pt-2 border-t border-[#2D2B42]">
+                    <p className="text-xs text-[#F5A623] font-semibold mb-1">💡 개선 방향</p>
+                    <p className="text-xs text-[#E8E6F0] leading-relaxed">{IMPROVEMENT_TIPS[dim]}</p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* JTBD 분석 */}
+      <div>
+        <h3 className="text-sm font-semibold text-[#E8E6F0] mb-3">JTBD 분석 — 고객이 진짜 원하는 것</h3>
+        {isGeneratingJTBD ? (
+          <div className="bg-[#1A1927] border border-[#2D2B42] rounded-xl p-6 flex items-center gap-3">
+            <div className="flex gap-1">
+              <div className="w-2 h-2 bg-[#534AB7] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+              <div className="w-2 h-2 bg-[#534AB7] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+              <div className="w-2 h-2 bg-[#534AB7] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+            </div>
+            <p className="text-sm text-[#8B89A0]">JTBD 분석 생성 중...</p>
+          </div>
+        ) : jtbdData ? (
+          <div className="space-y-3">
+            <div className="bg-[#1A1927] border border-[#2D2B42] rounded-xl p-4 space-y-3">
+              {[
+                { key: "functional_job" as const, label: "⚙️ 기능적 Job", color: "text-[#534AB7]" },
+                { key: "emotional_job" as const, label: "💚 감정적 Job", color: "text-[#1D9E75]" },
+                { key: "social_job" as const, label: "🤝 사회적 Job", color: "text-[#F5A623]" },
+              ].map(({ key, label, color }) => (
+                <div key={key}>
+                  <p className={`text-xs font-semibold mb-1 ${color}`}>{label}</p>
+                  <p className="text-sm text-[#E8E6F0]">{jtbdData[key]}</p>
+                </div>
+              ))}
+            </div>
+            {jtbdData.key_phrase && (
+              <div className="bg-[#2D2B42] border border-[#534AB7]/40 rounded-xl p-4 text-center">
+                <p className="text-xs text-[#8B89A0] mb-1">고객의 한 마디</p>
+                <p className="text-lg font-bold text-[#E8E6F0]">"{jtbdData.key_phrase}"</p>
+              </div>
+            )}
+            {jtbdData.differentiation_statement && (
+              <div className="bg-[#534AB7]/10 border border-[#534AB7]/30 rounded-xl p-4">
+                <p className="text-xs font-semibold text-[#534AB7] mb-1">차별화 포지셔닝</p>
+                <p className="text-sm text-[#E8E6F0] leading-relaxed">{jtbdData.differentiation_statement}</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="bg-[#1A1927] border border-[#2D2B42] rounded-xl p-4">
+            <p className="text-sm text-[#8B89A0]">JTBD 분석을 불러올 수 없습니다.</p>
+          </div>
+        )}
+      </div>
+
+      {/* 액션 버튼 */}
+      <div className="space-y-3 pb-4">
+        <button
+          onClick={onGeneratePlan}
+          disabled={isGenerating || creditBalance < 2}
+          className="w-full py-3 bg-[#534AB7] hover:bg-[#6358d6] disabled:bg-[#2D2B42] disabled:text-[#8B89A0] text-white font-semibold rounded-xl transition-colors"
+        >
+          {isGenerating ? "생성 중..." : "📄 사업계획서 생성 (2 크레딧)"}
+        </button>
+        {creditBalance < 2 && (
+          <p className="text-xs text-center text-[#F5A623]">크레딧이 부족합니다. 충전 후 이용하세요.</p>
+        )}
       </div>
     </div>
   );

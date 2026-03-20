@@ -1,4 +1,4 @@
-name = "cofound-ai"
+name = "foal-ai"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 
@@ -6,4 +6,4 @@ compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
 
 [vars]
-NEXT_PUBLIC_APP_URL = "https://cofound-ai.pages.dev"
+NEXT_PUBLIC_APP_URL = "https://foal-ai.pages.dev"
