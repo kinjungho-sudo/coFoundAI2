@@ -3,10 +3,10 @@ import { createServerSupabaseClient } from "@/lib/supabase";
 import { anthropic, MODEL, getDevilAdvocateSystemPrompt } from "@/lib/claude";
 import { validateAndFilter } from "@/lib/security";
 import { checkRateLimit } from "@/lib/rate-limit";
-
-export const runtime = "edge";
 import { DEVIL_TAB_LABELS } from "@/types";
 import type { DevilTab, DevilAdvocateResult } from "@/types";
+
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   const supabase = await createServerSupabaseClient();

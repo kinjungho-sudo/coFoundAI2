@@ -142,7 +142,6 @@ export interface Database {
           created_at?: string;
         };
       };
-    };
       rag_documents: {
         Row: {
           id: string;
