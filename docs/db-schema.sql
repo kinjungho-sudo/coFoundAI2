@@ -100,6 +100,77 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- ============================================================
+-- RAG 시스템
+-- ============================================================
+
+-- pgvector 확장 활성화 (최초 1회)
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- RAG 문서 저장 테이블
+CREATE TABLE IF NOT EXISTS rag_documents (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  source_id TEXT NOT NULL,
+  category TEXT NOT NULL CHECK (category IN ('gov_official', 'methodology', 'case_study')),
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  content_summary TEXT,
+  metadata JSONB DEFAULT '{}',
+  embedding vector(1536),
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 벡터 검색 인덱스 (ivfflat — 100만 건 미만 최적)
+CREATE INDEX IF NOT EXISTS rag_documents_embedding_idx
+  ON rag_documents USING ivfflat (embedding vector_cosine_ops)
+  WITH (lists = 100);
+
+-- 업데이트 이력 테이블
+CREATE TABLE IF NOT EXISTS rag_update_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  source_id TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('success', 'failed', 'no_change')),
+  documents_added INTEGER DEFAULT 0,
+  documents_updated INTEGER DEFAULT 0,
+  documents_deleted INTEGER DEFAULT 0,
+  error_message TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 벡터 유사도 검색 함수
+CREATE OR REPLACE FUNCTION search_rag_documents(
+  query_embedding vector(1536),
+  match_count INT DEFAULT 5,
+  filter_category TEXT DEFAULT NULL
+)
+RETURNS TABLE (
+  id UUID,
+  source_id TEXT,
+  category TEXT,
+  title TEXT,
+  content TEXT,
+  metadata JSONB,
+  similarity FLOAT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    d.id, d.source_id, d.category, d.title, d.content, d.metadata,
+    1 - (d.embedding <=> query_embedding) AS similarity
+  FROM rag_documents d
+  WHERE d.is_active = TRUE
+    AND (filter_category IS NULL OR d.category = filter_category)
+  ORDER BY d.embedding <=> query_embedding
+  LIMIT match_count;
+END;
+$$;
+
+-- ============================================================
+
 -- 크레딧 충전 함수
 CREATE OR REPLACE FUNCTION add_credit(p_user_id UUID, p_amount INTEGER)
 RETURNS INTEGER AS $$

@@ -140,6 +140,80 @@ export interface Database {
         };
       };
     };
+      rag_documents: {
+        Row: {
+          id: string;
+          source_id: string;
+          category: "gov_official" | "methodology" | "case_study";
+          title: string;
+          content: string;
+          content_summary: string | null;
+          metadata: Json;
+          embedding: unknown;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          source_id: string;
+          category: "gov_official" | "methodology" | "case_study";
+          title: string;
+          content: string;
+          content_summary?: string | null;
+          metadata?: Json;
+          embedding?: unknown;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          source_id?: string;
+          category?: "gov_official" | "methodology" | "case_study";
+          title?: string;
+          content?: string;
+          content_summary?: string | null;
+          metadata?: Json;
+          embedding?: unknown;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      rag_update_logs: {
+        Row: {
+          id: string;
+          source_id: string;
+          status: "success" | "failed" | "no_change";
+          documents_added: number;
+          documents_updated: number;
+          documents_deleted: number;
+          error_message: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          source_id: string;
+          status: "success" | "failed" | "no_change";
+          documents_added?: number;
+          documents_updated?: number;
+          documents_deleted?: number;
+          error_message?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          source_id?: string;
+          status?: "success" | "failed" | "no_change";
+          documents_added?: number;
+          documents_updated?: number;
+          documents_deleted?: number;
+          error_message?: string | null;
+          created_at?: string;
+        };
+      };
+    };
     Views: Record<string, never>;
     Functions: {
       deduct_credit: {
@@ -149,6 +223,22 @@ export interface Database {
       add_credit: {
         Args: { p_user_id: string; p_amount: number };
         Returns: number;
+      };
+      search_rag_documents: {
+        Args: {
+          query_embedding: unknown;
+          match_count?: number;
+          filter_category?: string | null;
+        };
+        Returns: Array<{
+          id: string;
+          source_id: string;
+          category: string;
+          title: string;
+          content: string;
+          metadata: Json;
+          similarity: number;
+        }>;
       };
     };
     Enums: Record<string, never>;

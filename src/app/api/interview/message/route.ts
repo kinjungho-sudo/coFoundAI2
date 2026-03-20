@@ -4,6 +4,7 @@ import { anthropic, MODEL, getInterviewSystemPrompt, getScoreSystemPrompt } from
 import { validateAndFilter } from "@/lib/security";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { validateScore } from "@/lib/score-engine";
+import { buildRAGContext } from "@/lib/rag/search";
 import { STEP_METADATA } from "@/types";
 import type { Message, ScoreItem } from "@/types";
 
@@ -89,7 +90,8 @@ export async function POST(req: NextRequest) {
   (async () => {
     try {
       const stepMeta = STEP_METADATA[step];
-      const systemPrompt = getInterviewSystemPrompt(step, stepMeta?.purpose || "");
+      const ragContext = await buildRAGContext(filtered, step);
+      const systemPrompt = getInterviewSystemPrompt(step, stepMeta?.purpose || "") + ragContext;
 
       // 이전 대화 히스토리 구성
       const conversationHistory = messages
