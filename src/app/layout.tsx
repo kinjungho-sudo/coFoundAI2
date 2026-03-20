@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Foal AI — AI 창업 멘토",
   description: "예비창업자의 아이디어를 질문으로 검증하고, 창업자의 생각을 사업계획서 언어로 번역해주는 AI 창업 멘토",

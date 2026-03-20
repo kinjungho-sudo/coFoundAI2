@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
@@ -301,7 +299,7 @@ export default function InterviewPage() {
         </div>
         <CreditBadge
           balance={creditBalance}
-          onCharge={() => router.push("/payment")}
+          onCharge={() => alert("결제 기능 준비 중입니다.")}
         />
       </header>
 

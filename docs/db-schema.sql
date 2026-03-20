@@ -54,13 +54,16 @@ ALTER TABLE interview_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE outputs ENABLE ROW LEVEL SECURITY;
 
 -- RLS 정책
-CREATE POLICY IF NOT EXISTS "users_own_credits" ON credits
+DROP POLICY IF EXISTS "users_own_credits" ON credits;
+CREATE POLICY "users_own_credits" ON credits
   FOR ALL USING (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "users_own_sessions" ON interview_sessions
+DROP POLICY IF EXISTS "users_own_sessions" ON interview_sessions;
+CREATE POLICY "users_own_sessions" ON interview_sessions
   FOR ALL USING (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "users_own_outputs" ON outputs
+DROP POLICY IF EXISTS "users_own_outputs" ON outputs;
+CREATE POLICY "users_own_outputs" ON outputs
   FOR ALL USING (auth.uid() = user_id);
 
 -- 신규 유저 크레딧 자동 생성 트리거 (얼리버드 500명 슬롯 포함)

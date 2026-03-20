@@ -203,7 +203,8 @@ export async function POST(req: NextRequest) {
       });
     } catch (err) {
       console.error("[interview/message] error:", err);
-      await sendEvent("error", { message: "처리 중 오류가 발생했습니다." });
+      const errMsg = err instanceof Error ? err.message : String(err);
+      await sendEvent("error", { message: errMsg });
     } finally {
       await writer.close();
     }
