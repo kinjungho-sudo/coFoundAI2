@@ -1,6 +1,5 @@
 import { createBrowserClient, createServerClient } from "@supabase/ssr";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
-import { cookies } from "next/headers";
 import type { Database } from "./database.types";
 
 // 브라우저 클라이언트 (클라이언트 컴포넌트용)
@@ -13,6 +12,7 @@ export function createClient() {
 
 // 서버 클라이언트 (서버 컴포넌트 / API Route용)
 export async function createServerSupabaseClient() {
+  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
 
   return createServerClient<Database>(
