@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       users: {
@@ -25,6 +25,7 @@ export interface Database {
           email?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       credits: {
         Row: {
@@ -48,6 +49,7 @@ export interface Database {
           earlybird_expires_at?: string | null;
           updated_at?: string;
         };
+        Relationships: [];
       };
       interview_sessions: {
         Row: {
@@ -77,12 +79,13 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       outputs: {
         Row: {
           id: string;
           user_id: string;
-          session_id: string;
+          session_id: string | null;
           type: "business_plan" | "gov_match" | "interview_analysis" | "landing_copy" | "jtbd_analysis" | "business_plan_review";
           content: string | null;
           credits_used: number | null;
@@ -106,6 +109,7 @@ export interface Database {
           credits_used?: number | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       payments: {
         Row: {
@@ -141,6 +145,7 @@ export interface Database {
           toss_payment_key?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       rag_documents: {
         Row: {
@@ -182,6 +187,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       rag_update_logs: {
         Row: {
@@ -214,9 +220,12 @@ export interface Database {
           error_message?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
     };
-    Views: Record<string, never>;
+    Views: {
+      [_ in never]: never;
+    };
     Functions: {
       deduct_credit: {
         Args: { p_user_id: string; p_amount: number };
@@ -243,6 +252,11 @@ export interface Database {
         }>;
       };
     };
-    Enums: Record<string, never>;
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
-}
+};

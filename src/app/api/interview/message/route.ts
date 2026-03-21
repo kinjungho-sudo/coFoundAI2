@@ -203,8 +203,23 @@ export async function POST(req: NextRequest) {
       });
     } catch (err) {
       console.error("[interview/message] error:", err);
-      const errMsg = err instanceof Error ? err.message : String(err);
-      await sendEvent("error", { message: errMsg });
+      const raw = err instanceof Error ? err.message : String(err);
+      let userMsg = "일시적인 오류가 발생했습니다. 다시 시도해주세요.";
+      try {
+        const parsed = JSON.parse(raw);
+        const errType = parsed?.error?.type || parsed?.type || "";
+        if (errType === "overloaded_error") {
+          userMsg = "AI 서버가 잠시 바쁩니다. 1~2분 후 다시 시도해주세요.";
+        } else if (errType === "rate_limit_error") {
+          userMsg = "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.";
+        } else if (errType === "invalid_request_error") {
+          userMsg = "요청 오류가 발생했습니다. 페이지를 새로고침 후 다시 시도해주세요.";
+        }
+      } catch {
+        if (raw.includes("overloaded")) userMsg = "AI 서버가 잠시 바쁩니다. 1~2분 후 다시 시도해주세요.";
+        else if (raw.includes("rate_limit")) userMsg = "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.";
+      }
+      await sendEvent("error", { message: userMsg });
     } finally {
       await writer.close();
     }

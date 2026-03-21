@@ -18,6 +18,14 @@ out/
 .env.test.local
 .env.production.local
 
+# Age key (마스터 키 — 절대 커밋 금지)
+.age-key.txt
+
+# Encrypted env (로컬 전용)
+.env.local.enc
+scripts/env-encrypt.bat
+scripts/env-decrypt.bat
+
 # Build
 build/
 dist/

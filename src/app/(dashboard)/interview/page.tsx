@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import ChatBubble from "@/components/chat/ChatBubble";
 import ChatInput from "@/components/chat/ChatInput";
@@ -287,9 +288,9 @@ export default function InterviewPage() {
       {/* 헤더 */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-[#2D2B42] bg-[#1A1927]">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#534AB7] flex items-center justify-center">
+          <Link href="/" className="w-8 h-8 rounded-lg bg-[#534AB7] hover:bg-[#6259c7] flex items-center justify-center transition-colors" title="홈으로">
             <span className="text-white text-xs font-bold">F</span>
-          </div>
+          </Link>
           <span className="font-semibold text-[#E8E6F0]">Foal AI</span>
           {interviewComplete && (
             <span className="text-xs bg-[#1D9E75] text-white px-2 py-0.5 rounded-full">
@@ -297,10 +298,15 @@ export default function InterviewPage() {
             </span>
           )}
         </div>
-        <CreditBadge
-          balance={creditBalance}
-          onCharge={() => alert("결제 기능 준비 중입니다.")}
-        />
+        <div className="flex items-center gap-3">
+          <Link href="/" className="text-xs text-[#8B89A0] hover:text-[#E8E6F0] transition-colors hidden sm:block">
+            홈
+          </Link>
+          <CreditBadge
+            balance={creditBalance}
+            onCharge={() => alert("결제 기능 준비 중입니다.")}
+          />
+        </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
@@ -336,9 +342,7 @@ export default function InterviewPage() {
                 scoreBoard={scoreBoard}
                 jtbdData={jtbdData}
                 isGeneratingJTBD={isGeneratingJTBD}
-                onGeneratePlan={handleGeneratePlan}
-                isGenerating={isGenerating}
-                creditBalance={creditBalance}
+                sessionId={sessionId}
               />
             ) : (
             <>
@@ -425,20 +429,22 @@ function CompletionPanel({
   scoreBoard,
   jtbdData,
   isGeneratingJTBD,
-  onGeneratePlan,
-  isGenerating,
-  creditBalance,
+  sessionId,
 }: {
   scoreBoard: Partial<ScoreBoard>;
   jtbdData: JTBDAnalysis | null;
   isGeneratingJTBD: boolean;
-  onGeneratePlan: () => void;
-  isGenerating: boolean;
-  creditBalance: number;
+  sessionId: string | null;
 }) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const total = scoreBoard.total ?? 0;
   const level = scoreBoard.level ?? "need_work";
   const items = scoreBoard.items ?? ({} as Record<ScoreDimension, ScoreItem>);
+
+  // 패널 마운트 시 스크롤 최상단으로
+  useEffect(() => {
+    if (containerRef.current) containerRef.current.scrollTop = 0;
+  }, []);
 
   const levelConfig = {
     excellent: { label: "탁월한 창업 아이디어", color: "text-[#1D9E75]", border: "border-[#1D9E75]/30", bg: "bg-[#1D9E75]/10" },
@@ -449,7 +455,7 @@ function CompletionPanel({
   const dimensions = Object.keys(DIMENSION_LABELS) as ScoreDimension[];
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-6">
+    <div ref={containerRef} className="flex-1 overflow-y-auto p-6 space-y-6">
       {/* 종합 점수 카드 */}
       <div className={`rounded-2xl border p-6 ${cfg.bg} ${cfg.border}`}>
         <p className="text-xs text-[#8B89A0] mb-2">9단계 인터뷰 완료 · 종합 점수</p>
@@ -545,16 +551,16 @@ function CompletionPanel({
 
       {/* 액션 버튼 */}
       <div className="space-y-3 pb-4">
-        <button
-          onClick={onGeneratePlan}
-          disabled={isGenerating || creditBalance < 2}
-          className="w-full py-3 bg-[#534AB7] hover:bg-[#6358d6] disabled:bg-[#2D2B42] disabled:text-[#8B89A0] text-white font-semibold rounded-xl transition-colors"
+        <Link
+          href={sessionId ? `/write?session=${sessionId}` : "/write"}
+          className="w-full py-3.5 bg-[#534AB7] hover:bg-[#6358d6] text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
         >
-          {isGenerating ? "생성 중..." : "📄 사업계획서 생성 (2 크레딧)"}
-        </button>
-        {creditBalance < 2 && (
-          <p className="text-xs text-center text-[#F5A623]">크레딧이 부족합니다. 충전 후 이용하세요.</p>
-        )}
+          ✍️ 사업계획서 작성 시작하기
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </Link>
+        <p className="text-xs text-center text-[#8B89A0]">인터뷰 내용을 바탕으로 AI와 함께 섹션별로 작성합니다</p>
       </div>
     </div>
   );
