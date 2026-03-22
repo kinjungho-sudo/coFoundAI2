@@ -6,7 +6,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { DEVIL_TAB_LABELS } from "@/types";
 import type { DevilTab, DevilAdvocateResult } from "@/types";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
   const supabase = await createServerSupabaseClient();

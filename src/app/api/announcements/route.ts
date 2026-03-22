@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const runtime = "edge";
+
 /* ─── 타입 ─── */
 export interface LiveAnnouncement {
   id: string;
