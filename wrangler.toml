@@ -7,3 +7,6 @@ pages_build_output_dir = ".vercel/output/static"
 
 [vars]
 NEXT_PUBLIC_APP_URL = "https://cofoundai2.pages.dev"
+NEXT_PUBLIC_SUPABASE_URL = "https://prrwuccyhddyondnxhdc.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBycnd1Y2N5aGRkeW9uZG54aGRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MTgxMTQsImV4cCI6MjA4OTQ5NDExNH0.ztz8V3SnhlPH1VK0giBPy-H_Sq9npzdl9L-sPXHuLtw"
+NEXT_PUBLIC_MODEL = "claude-sonnet-4-6"
