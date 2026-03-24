@@ -329,7 +329,7 @@ export default function LandingPage() {
   const [current, setCurrent] = useState(0);
   const isAnimating = useRef(false);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const TOTAL = 9;
+  const TOTAL = 10;
 
   const goTo = useCallback((i: number) => {
     if (i < 0 || i >= TOTAL || isAnimating.current) return;
@@ -409,9 +409,9 @@ export default function LandingPage() {
           <Link href="/announcements" className="hover:text-[#0B1120] transition-colors">공고마당</Link>
           <Link href="/templates" className="hover:text-[#0B1120] transition-colors">사업계획서 양식</Link>
           <Link href="/review" className="hover:text-[#0B1120] transition-colors">AI 심사</Link>
-          <button onClick={() => goTo(2)} className="hover:text-[#0B1120] transition-colors cursor-pointer">데모</button>
-          <button onClick={() => goTo(7)} className="hover:text-[#0B1120] transition-colors cursor-pointer">요금제</button>
-          <button onClick={() => goTo(6)} className="hover:text-[#0B1120] transition-colors cursor-pointer">후기</button>
+          <button onClick={() => goTo(3)} className="hover:text-[#0B1120] transition-colors cursor-pointer">데모</button>
+          <button onClick={() => goTo(8)} className="hover:text-[#0B1120] transition-colors cursor-pointer">요금제</button>
+          <button onClick={() => goTo(7)} className="hover:text-[#0B1120] transition-colors cursor-pointer">후기</button>
         </div>
         <Link href="/login"
           className="px-5 py-2.5 bg-[#0B1120] text-white text-sm font-bold rounded-xl hover:bg-[#1a2540] transition-colors">
@@ -489,7 +489,7 @@ export default function LandingPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </Link>
-                <button onClick={() => goTo(2)}
+                <button onClick={() => goTo(3)}
                   className="inline-flex items-center gap-2 px-8 py-4 border border-[#2A3D58] text-[#8B9AB0] font-bold rounded-2xl text-lg hover:border-[#F0A500] hover:text-white transition-colors">
                   시연 보기
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -512,9 +512,94 @@ export default function LandingPage() {
           </section>
         </div>
 
-        {/* ── 섹션 1: 숫자 + HOW IT WORKS ── */}
-        <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide bg-[#FAFAF8]"
+        {/* ── 섹션 1: 창업자의 현실 ── */}
+        <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide"
           ref={el => { sectionRefs.current[1] = el; }}>
+          <section className="bg-[#0B1120] min-h-[100dvh] px-8 md:px-16 pt-28 pb-16 flex flex-col justify-center">
+            <div className="max-w-5xl mx-auto w-full">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="h-px w-12 bg-[#E24B4A]" />
+                <span className="text-[#E24B4A] text-xs font-bold tracking-widest uppercase">창업자의 현실</span>
+              </div>
+
+              <h2 className="text-4xl md:text-5xl font-black text-white leading-tight mb-4">
+                검증 없이 시작하는<br />
+                <span className="text-[#E24B4A]">이 악순환</span>, 알고 있습니까
+              </h2>
+              <p className="text-[#8B9AB0] text-lg mb-10 max-w-xl">
+                예비창업자 10명 중 8명이 실질적 검증 없이 사업계획서 작성을 시작합니다.
+              </p>
+
+              {/* 3 Pain Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+                {[
+                  {
+                    tag: "IDEA CHAOS",
+                    label: "아이디어 혼돈",
+                    desc: "구조도 논리도 없이 포스트잇만 쌓인다. 어디서부터 시작해야 할지 모른다.",
+                    img: "/pain/chaos.jpg",
+                  },
+                  {
+                    tag: "DOCUMENTATION FAILURE",
+                    label: "사업계획서 탈락",
+                    desc: "검증 없이 쓴 계획서는 심사위원 앞에서 무너진다. '구조 부족', '논리 결여'.",
+                    img: "/pain/failure.jpg",
+                  },
+                  {
+                    tag: "MARKET CONFUSION",
+                    label: "시장 정의 실패",
+                    desc: "타겟도 문제도 시장도 정의되지 않은 채 시작한다. 전부 연결이 안 된다.",
+                    img: "/pain/confusion.jpg",
+                  },
+                ].map((p) => (
+                  <div key={p.tag} className="rounded-2xl overflow-hidden bg-[#1E2D48] border border-[#2A3D58]">
+                    <div className="relative h-44 bg-[#0B1120] overflow-hidden">
+                      <img
+                        src={p.img}
+                        alt={p.label}
+                        className="w-full h-full object-cover opacity-80"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                      <div className="absolute bottom-3 left-3">
+                        <span className="text-white text-[10px] font-black tracking-widest bg-[#E24B4A]/90 px-2 py-0.5 rounded">{p.tag}</span>
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      <p className="text-white font-black text-base mb-1.5">{p.label}</p>
+                      <p className="text-[#8B9AB0] text-sm leading-relaxed">{p.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Current Behavior Callout */}
+              <div className="bg-[#1E2D48]/60 border border-[#2A3D58] rounded-2xl px-6 py-5">
+                <p className="text-[#E24B4A] text-xs font-bold tracking-widest uppercase mb-4">지금 이렇게 하고 있지 않나요?</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  {[
+                    'ChatGPT에 "내 아이디어 어때?"라고 물어본다',
+                    '지인 카톡으로 "이런 거 써볼래?"라고 묻는다',
+                  ].map((t) => (
+                    <div key={t} className="flex items-center gap-3 bg-[#0B1120] rounded-xl px-4 py-3">
+                      <span className="text-[#E24B4A] font-black text-base flex-shrink-0">✗</span>
+                      <span className="text-[#C8D3E0] text-sm">{t}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[#8B9AB0] text-sm leading-relaxed">
+                  이게 <span className="text-white font-bold">검증</span>이라고 생각하고 사업계획서 작성을 시작합니다.
+                  ChatGPT는 항상 "좋아 보여요"라고 합니다. 지인은 예의상 맞장구를 칩니다.
+                  <span className="text-[#F0A500] font-bold"> Foal AI는 다릅니다.</span>
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* ── 섹션 2: 숫자 + HOW IT WORKS ── */}
+        <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide bg-[#FAFAF8]"
+          ref={el => { sectionRefs.current[2] = el; }}>
           <div className="bg-white border-b border-[#E8E4DC] py-10 px-8 md:px-16 pt-24">
             <div className="max-w-5xl mx-auto grid grid-cols-3 divide-x divide-[#E8E4DC]">
               {[
@@ -612,9 +697,9 @@ export default function LandingPage() {
           </section>
         </div>
 
-        {/* ── 섹션 2: 라이브 데모 ── */}
+        {/* ── 섹션 3: 라이브 데모 ── */}
         <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide"
-          ref={el => { sectionRefs.current[2] = el; }}>
+          ref={el => { sectionRefs.current[3] = el; }}>
           <section id="demo" className="bg-[#060C18] min-h-[100dvh] py-24 px-6 md:px-16 pt-28">
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12">
@@ -633,9 +718,9 @@ export default function LandingPage() {
           </section>
         </div>
 
-        {/* ── 섹션 3: 인터뷰 완료 후 분기 선택 ── */}
+        {/* ── 섹션 4: 인터뷰 완료 후 분기 선택 ── */}
         <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide"
-          ref={el => { sectionRefs.current[3] = el; }}>
+          ref={el => { sectionRefs.current[4] = el; }}>
           <section className="bg-[#0B1120] min-h-[100dvh] py-20 px-6 md:px-16 pt-28 flex items-center">
             <div className="max-w-4xl mx-auto w-full">
               <div className="text-center mb-12">
@@ -707,9 +792,9 @@ export default function LandingPage() {
           </section>
         </div>
 
-        {/* ── 섹션 4 (구 3): STEP 2 사업계획서 작성 ── */}
+        {/* ── 섹션 5: STEP 2 사업계획서 작성 ── */}
         <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide"
-          ref={el => { sectionRefs.current[4] = el; }}>
+          ref={el => { sectionRefs.current[5] = el; }}>
           <section className="bg-[#0B1120] min-h-[100dvh] py-20 px-6 md:px-16 pt-28 border-t border-[#1E2D48]">
             <div className="max-w-4xl mx-auto">
               <div className="flex items-center gap-3 mb-8">
@@ -779,9 +864,9 @@ export default function LandingPage() {
           </section>
         </div>
 
-        {/* ── 섹션 5: 사업계획서 ── */}
+        {/* ── 섹션 6: 사업계획서 ── */}
         <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide"
-          ref={el => { sectionRefs.current[5] = el; }}>
+          ref={el => { sectionRefs.current[6] = el; }}>
           <section className="bg-[#0B1120] min-h-[100dvh] py-28 px-8 md:px-16 flex items-center">
             <div className="max-w-5xl mx-auto w-full">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
@@ -842,9 +927,9 @@ export default function LandingPage() {
           </section>
         </div>
 
-        {/* ── 섹션 6: 후기 ── */}
+        {/* ── 섹션 7: 후기 ── */}
         <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide"
-          ref={el => { sectionRefs.current[6] = el; }}>
+          ref={el => { sectionRefs.current[7] = el; }}>
           <section id="reviews" className="min-h-[100dvh] py-28 px-8 md:px-16 bg-[#FAFAF8] flex items-center">
             <div className="max-w-5xl mx-auto w-full">
               <div className="mb-16">
@@ -873,9 +958,9 @@ export default function LandingPage() {
           </section>
         </div>
 
-        {/* ── 섹션 7: 요금제 ── */}
+        {/* ── 섹션 8: 요금제 ── */}
         <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide"
-          ref={el => { sectionRefs.current[7] = el; }}>
+          ref={el => { sectionRefs.current[8] = el; }}>
           <section id="pricing" className="min-h-[100dvh] py-28 px-8 md:px-16 bg-white border-t border-[#E8E4DC] flex items-center">
             <div className="max-w-4xl mx-auto w-full">
               <div className="text-center mb-12">
@@ -954,9 +1039,9 @@ export default function LandingPage() {
           </section>
         </div>
 
-        {/* ── 섹션 8: CTA + 푸터 ── */}
+        {/* ── 섹션 9: CTA + 푸터 ── */}
         <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide"
-          ref={el => { sectionRefs.current[8] = el; }}>
+          ref={el => { sectionRefs.current[9] = el; }}>
           <section className="bg-[#0B1120] min-h-[80dvh] py-32 px-8 md:px-16 text-center flex flex-col items-center justify-center">
             <div className="max-w-3xl mx-auto">
               <p className="text-[#F0A500] text-xs font-bold tracking-widest uppercase mb-6">지금 시작하세요</p>
