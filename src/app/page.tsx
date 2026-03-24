@@ -106,7 +106,7 @@ function LiveDemo() {
   const [planIdx, setPlanIdx] = useState(0);
   const [chat, setChat] = useState<{ role: "ai" | "user"; text: string }[]>([]);
   const [showPlan, setShowPlan] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const scene = SCENARIO[sceneIdx] ?? SCENARIO[SCENARIO.length - 1];
   const aiTyping = useTyping(scene.aiQ, phase === "ai-typing");
@@ -179,7 +179,8 @@ function LiveDemo() {
   }, [phase]);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = chatContainerRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [chat, aiTyping.displayed, userTyping.displayed]);
 
   const totalScore = Object.values(scores).reduce((a, b) => a + b, 0);
@@ -203,7 +204,7 @@ function LiveDemo() {
       <div className="grid grid-cols-1 md:grid-cols-2">
         {/* 왼쪽: 채팅 */}
         <div className="border-r border-[#2A3D58] flex flex-col" style={{ height: 420 }}>
-          <div className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-3 scrollbar-hide">
+          <div ref={chatContainerRef} className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-3 scrollbar-hide">
             {chat.map((msg, i) => (
               <div key={i} className={`flex gap-2 ${msg.role === "user" ? "justify-end" : ""}`}>
                 {msg.role === "ai" && (
@@ -229,7 +230,7 @@ function LiveDemo() {
                 </div>
               </div>
             )}
-            <div ref={chatEndRef} />
+            <div />
           </div>
           <div className="border-t border-[#2A3D58] p-3 flex items-center gap-2">
             <div className="flex-1 bg-[#1E2D48] rounded-xl px-3 py-2 text-xs text-[#4A5568]">
@@ -334,17 +335,34 @@ export default function LandingPage() {
     if (i < 0 || i >= TOTAL || isAnimating.current) return;
     isAnimating.current = true;
     setCurrent(i);
-    setTimeout(() => { isAnimating.current = false; }, 900);
+    setTimeout(() => { isAnimating.current = false; }, 800);
   }, []);
 
   useEffect(() => {
     const onWheel = (e: WheelEvent) => {
       const sec = sectionRefs.current[current];
-      if (sec) {
-        const { scrollTop, scrollHeight, clientHeight } = sec;
-        if (e.deltaY > 0 && scrollTop + clientHeight < scrollHeight - 4) return;
-        if (e.deltaY < 0 && scrollTop > 4) return;
+      if (!sec) return;
+
+      // 이벤트 발생 위치부터 섹션 래퍼까지 모든 스크롤 가능한 요소를 순서대로 확인
+      // 가장 안쪽 스크롤 가능 요소가 경계에 도달했을 때만 섹션 전환
+      let el = e.target as HTMLElement | null;
+      while (el && el !== sec) {
+        const overflow = window.getComputedStyle(el).overflowY;
+        if (overflow === 'auto' || overflow === 'scroll') {
+          const { scrollTop, scrollHeight, clientHeight } = el;
+          const atBottom = scrollTop + clientHeight >= scrollHeight - 4;
+          const atTop = scrollTop <= 4;
+          if (e.deltaY > 0 && !atBottom) return; // 내부 스크롤 여유 있음
+          if (e.deltaY < 0 && !atTop) return;     // 내부 스크롤 여유 있음
+        }
+        el = el.parentElement;
       }
+
+      // 섹션 래퍼 자체의 스크롤 확인
+      const { scrollTop, scrollHeight, clientHeight } = sec;
+      if (e.deltaY > 0 && scrollTop + clientHeight < scrollHeight - 4) return;
+      if (e.deltaY < 0 && scrollTop > 4) return;
+
       e.preventDefault();
       goTo(current + (e.deltaY > 0 ? 1 : -1));
     };
@@ -420,7 +438,7 @@ export default function LandingPage() {
       {/* 슬라이딩 컨테이너 */}
       <div style={{
         transform: `translateY(calc(-${current} * 100dvh))`,
-        transition: 'transform 850ms cubic-bezier(0.77, 0, 0.175, 1)',
+        transition: 'transform 750ms cubic-bezier(0.65, 0, 0.35, 1)',
         willChange: 'transform',
       }}>
 
