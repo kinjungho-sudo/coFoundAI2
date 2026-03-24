@@ -10,15 +10,15 @@ const EARLYBIRD_TOTAL = 500;
 
 /* ─── HOW IT WORKS 스텝 ─── */
 const STEPS = [
-  { n: 1, label: "문제 정의", desc: "진짜 문제인지, 가짜 문제인지" },
-  { n: 2, label: "타겟 고객", desc: "누가 이 문제로 밤잠을 설치는가" },
-  { n: 3, label: "현재 대안", desc: "지금 어떻게 해결하고 있는가" },
+  { n: 1, label: "문제 탐색", desc: "지금 해결하고 싶은 문제가 뭔가요?" },
+  { n: 2, label: "한 줄 정의", desc: "핵심 문제를 한 문장으로" },
+  { n: 3, label: "타겟 고객", desc: "누가 이 문제로 밤잠을 설치는가" },
   { n: 4, label: "JTBD 발견", desc: "고객이 진짜 원하는 것은 무엇인가" },
-  { n: 5, label: "차별점", desc: "왜 당신의 해결책이어야 하는가" },
-  { n: 6, label: "시장 규모", desc: "얼마나 큰 기회인가" },
-  { n: 7, label: "비즈니스 모델", desc: "어떻게 돈을 버는가" },
-  { n: 8, label: "창업자 적합성", desc: "왜 당신이 해야 하는가" },
-  { n: 9, label: "실행 계획", desc: "다음 90일 안에 무엇을 할 것인가" },
+  { n: 5, label: "페인포인트 검증", desc: "지금 어떻게 해결하고 있는가" },
+  { n: 6, label: "차별점 발굴", desc: "왜 당신의 해결책이어야 하는가" },
+  { n: 7, label: "창업자 강점", desc: "왜 당신이 해야 하는가" },
+  { n: 8, label: "리소스 파악", desc: "지금 가진 것과 필요한 것" },
+  { n: 9, label: "다음 액션", desc: "이번 주 딱 하나만 한다면" },
 ];
 
 const QUOTES = [
@@ -328,7 +328,7 @@ export default function LandingPage() {
   const [current, setCurrent] = useState(0);
   const isAnimating = useRef(false);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const TOTAL = 8;
+  const TOTAL = 9;
 
   const goTo = useCallback((i: number) => {
     if (i < 0 || i >= TOTAL || isAnimating.current) return;
@@ -392,8 +392,8 @@ export default function LandingPage() {
           <Link href="/templates" className="hover:text-[#0B1120] transition-colors">사업계획서 양식</Link>
           <Link href="/review" className="hover:text-[#0B1120] transition-colors">AI 심사</Link>
           <button onClick={() => goTo(2)} className="hover:text-[#0B1120] transition-colors cursor-pointer">데모</button>
-          <button onClick={() => goTo(6)} className="hover:text-[#0B1120] transition-colors cursor-pointer">요금제</button>
-          <button onClick={() => goTo(5)} className="hover:text-[#0B1120] transition-colors cursor-pointer">후기</button>
+          <button onClick={() => goTo(7)} className="hover:text-[#0B1120] transition-colors cursor-pointer">요금제</button>
+          <button onClick={() => goTo(6)} className="hover:text-[#0B1120] transition-colors cursor-pointer">후기</button>
         </div>
         <Link href="/login"
           className="px-5 py-2.5 bg-[#0B1120] text-white text-sm font-bold rounded-xl hover:bg-[#1a2540] transition-colors">
@@ -440,25 +440,26 @@ export default function LandingPage() {
               </div>
 
               <h1 className="text-[clamp(2.8rem,7vw,6rem)] font-black leading-[1.05] text-white mb-8">
-                아이디어를 검증하고<br />
-                <span className="text-[#F0A500]">사업계획서를</span><br />
-                함께 완성하세요.
+                "내 아이디어,<br />
+                <span className="text-[#F0A500]">진짜 될까?"</span><br />
+                먼저 확인하세요.
               </h1>
 
               <p className="text-[#8B9AB0] text-xl max-w-xl leading-relaxed mb-6">
-                9단계 소크라테스식 인터뷰로 진짜 타겟 고객을 발견하고 아이디어를 검증합니다.
-                검증이 끝나면 AI와 대화하며 사업계획서를 섹션별로 함께 완성합니다.
+                ChatGPT는 "좋아 보여요"만 돌아옵니다. 지인은 예의상 맞장구를 칩니다.
+                Foal AI는 9단계 소크라테스식 인터뷰로 아이디어를 검증하고,
+                실제 고객 앞에 랜딩페이지를 띄워 데이터로 확인합니다.
               </p>
 
               <div className="flex items-center gap-4 mb-8">
                 <div className="flex items-center gap-2 text-sm">
                   <span className="w-6 h-6 rounded-full bg-[#F0A500] text-[#0B1120] font-black flex items-center justify-center text-xs">1</span>
-                  <span className="text-[#8B9AB0]">창업 검증 인터뷰</span>
+                  <span className="text-[#8B9AB0]">AI 인터뷰로 검증</span>
                 </div>
                 <div className="h-px w-8 bg-[#2A3D58]" />
                 <div className="flex items-center gap-2 text-sm">
                   <span className="w-6 h-6 rounded-full bg-[#2A3D58] text-[#8B9AB0] font-black flex items-center justify-center text-xs">2</span>
-                  <span className="text-[#8B9AB0]">AI 협업 사업계획서 작성</span>
+                  <span className="text-[#8B9AB0]">랜딩페이지 or 사업계획서</span>
                 </div>
               </div>
 
@@ -525,7 +526,7 @@ export default function LandingPage() {
                   <h2 className="text-4xl md:text-5xl font-black text-[#0B1120] leading-tight">
                     9개의 질문으로<br />아이디어를 검증한다
                   </h2>
-                  <p className="text-[#6B7280] text-base mt-3">소크라테스식 인터뷰로 타겟 고객, 문제의 실재성, 차별점을 명확히 합니다.</p>
+                  <p className="text-[#6B7280] text-base mt-3">소크라테스식 인터뷰로 타겟 고객과 JTBD를 발견합니다. 검증 후 랜딩페이지 또는 사업계획서를 선택하세요.</p>
                 </div>
               </div>
 
@@ -565,15 +566,15 @@ export default function LandingPage() {
                     <div className="flex gap-3">
                       <div className="w-8 h-8 rounded-full bg-[#F0A500] flex-shrink-0 flex items-center justify-center text-[#0B1120] text-xs font-black">F</div>
                       <div className="bg-[#1E2D48] rounded-2xl rounded-tl-none px-4 py-3 text-sm text-[#C8D3E0] max-w-xs leading-relaxed">
-                        {activeStep === 0 && "어떤 문제를 해결하려고 하시나요? 아이디어가 아니라, 문제부터 이야기해 주세요."}
-                        {activeStep === 1 && "이 문제를 가장 심각하게 겪는 사람은 누구인가요? 이름, 나이, 직업까지 구체적으로 떠올려 보세요."}
-                        {activeStep === 2 && "그 사람은 지금 이 문제를 어떻게 해결하고 있나요? 완벽하지 않더라도 현재 방법이 있을 겁니다."}
-                        {activeStep === 3 && "그 사람이 진짜 원하는 건 도구가 아닙니다. 그 도구를 통해 얻고 싶은 결과가 무엇인가요?"}
-                        {activeStep === 4 && "기존 방법 대비 당신의 해결책이 10배 나은 이유는 무엇인가요? 수치로 표현해 주세요."}
-                        {activeStep === 5 && "이 시장은 얼마나 큰가요? TAM → SAM → SOM 순서로 추정해 보세요."}
-                        {activeStep === 6 && "고객 1명에게 얼마를 받을 수 있을까요? 처음 10명은 어떻게 확보할 계획인가요?"}
-                        {activeStep === 7 && "'왜 당신이어야 하는가'를 한 문장으로 말해보세요. 이 문제를 직접 겪어봤나요?"}
-                        {activeStep === 8 && "이번 주 안에 할 수 있는 단 한 가지 행동은 무엇인가요? 계획이 아니라 실행입니다."}
+                        {activeStep === 0 && "안녕하세요. 저는 AI 창업 멘토, Foal AI입니다. 지금 해결하고 싶은 문제가 뭔가요? 편하게 말씀해주세요."}
+                        {activeStep === 1 && "방금 말씀하신 내용에서 핵심 문제를 한 문장으로 표현하면 어떻게 될까요?"}
+                        {activeStep === 2 && "그 문제를 가장 심하게 겪는 사람은 누구일까요? 나이, 직업, 상황을 구체적으로 그려보세요."}
+                        {activeStep === 3 && "그 사람이 당신의 서비스를 쓰는 이유가 뭘까요? 제품 기능이 아니라 — 진짜 이루고 싶은 것, 느끼고 싶은 것으로 말해보세요."}
+                        {activeStep === 4 && "그 사람이 지금 이 문제를 어떻게 해결하고 있을까요? 돈을 내면서 해결하고 있나요, 아니면 그냥 참고 있나요?"}
+                        {activeStep === 5 && "기존 방법과 비교해서 본인의 해결책이 왜 10배 더 낫다고 말할 수 있나요?"}
+                        {activeStep === 6 && "이 문제를 본인이 해야 하는 이유가 있나요? 경력, 경험, 네트워크 중 어떤 게 이 문제와 연결되나요?"}
+                        {activeStep === 7 && "지금 당장 시작하려면 뭐가 필요하고, 뭐가 있나요?"}
+                        {activeStep === 8 && "오늘 대화를 바탕으로 이번 주에 딱 하나만 한다면 뭘 하시겠어요?"}
                       </div>
                     </div>
                     <div className="flex items-center gap-2 mt-8">
@@ -614,9 +615,83 @@ export default function LandingPage() {
           </section>
         </div>
 
-        {/* ── 섹션 3: STEP 2 사업계획서 작성 ── */}
+        {/* ── 섹션 3: 인터뷰 완료 후 분기 선택 ── */}
         <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide"
           ref={el => { sectionRefs.current[3] = el; }}>
+          <section className="bg-[#0B1120] min-h-[100dvh] py-20 px-6 md:px-16 pt-28 flex items-center">
+            <div className="max-w-4xl mx-auto w-full">
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 bg-[#F0A500]/10 border border-[#F0A500]/30 rounded-full px-4 py-1.5 text-xs text-[#F0A500] font-bold mb-6">
+                  인터뷰 완료 후
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black text-white leading-tight mb-4">
+                  다음 단계를<br />선택하세요
+                </h2>
+                <p className="text-[#8B9AB0] text-lg">
+                  검증이 끝나면 두 가지 방향으로 나아갈 수 있습니다
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* 랜딩페이지 */}
+                <div className="bg-[#1E2D48] border border-[#2A3D58] rounded-3xl p-8 hover:border-[#F0A500]/50 transition-colors">
+                  <div className="w-12 h-12 rounded-2xl bg-[#F0A500]/10 flex items-center justify-center mb-6">
+                    <svg className="w-6 h-6 text-[#F0A500]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H4a2 2 0 01-2-2V5a2 2 0 012-2h16a2 2 0 012 2v10a2 2 0 01-2 2h-1" />
+                    </svg>
+                  </div>
+                  <span className="text-xs font-black text-[#F0A500] bg-[#F0A500]/10 px-2.5 py-1 rounded-full">옵션 1</span>
+                  <h3 className="text-2xl font-black text-white mt-4 mb-3">랜딩페이지<br />자동 제작</h3>
+                  <p className="text-[#8B9AB0] text-sm leading-relaxed mb-6">
+                    실제 고객이 있는지 먼저 확인하고 싶다면. JTBD 기반으로 헤드라인·문제·차별점·CTA를 자동 생성하고 배포 링크를 만듭니다.
+                  </p>
+                  <div className="space-y-2">
+                    {["JTBD 기반 카피 자동 작성", "페르소나 이미지 포함", "배포 링크 즉시 생성", "고객 유입 DB 확보"].map(t => (
+                      <div key={t} className="flex items-center gap-2 text-[#C8D3E0] text-xs">
+                        <span className="text-[#F0A500]">→</span>{t}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 사업계획서 */}
+                <div className="bg-[#1E2D48] border border-[#2A3D58] rounded-3xl p-8 hover:border-[#F0A500]/50 transition-colors">
+                  <div className="w-12 h-12 rounded-2xl bg-[#F0A500]/10 flex items-center justify-center mb-6">
+                    <svg className="w-6 h-6 text-[#F0A500]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <span className="text-xs font-black text-[#F0A500] bg-[#F0A500]/10 px-2.5 py-1 rounded-full">옵션 2</span>
+                  <h3 className="text-2xl font-black text-white mt-4 mb-3">사업계획서<br />자동 제작</h3>
+                  <p className="text-[#8B9AB0] text-sm leading-relaxed mb-6">
+                    바로 사업계획서를 작성하고 싶다면. 인터뷰에서 발견한 모든 맥락을 AI가 기억하고 섹션별로 함께 완성합니다.
+                  </p>
+                  <div className="space-y-2">
+                    {["7개 섹션 대화형 작성", "예창패 공식 양식 반영", "악마의 변호인 피드백", "PDF/Word 완성본 출력"].map(t => (
+                      <div key={t} className="flex items-center gap-2 text-[#C8D3E0] text-xs">
+                        <span className="text-[#F0A500]">→</span>{t}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center mt-10">
+                <Link href="/login"
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-[#F0A500] text-[#0B1120] font-black rounded-2xl text-lg hover:bg-[#f5b530] transition-colors">
+                  인터뷰 시작하기
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* ── 섹션 4 (구 3): STEP 2 사업계획서 작성 ── */}
+        <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide"
+          ref={el => { sectionRefs.current[4] = el; }}>
           <section className="bg-[#0B1120] min-h-[100dvh] py-20 px-6 md:px-16 pt-28 border-t border-[#1E2D48]">
             <div className="max-w-4xl mx-auto">
               <div className="flex items-center gap-3 mb-8">
@@ -686,9 +761,9 @@ export default function LandingPage() {
           </section>
         </div>
 
-        {/* ── 섹션 4: 사업계획서 ── */}
+        {/* ── 섹션 5: 사업계획서 ── */}
         <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide"
-          ref={el => { sectionRefs.current[4] = el; }}>
+          ref={el => { sectionRefs.current[5] = el; }}>
           <section className="bg-[#0B1120] min-h-[100dvh] py-28 px-8 md:px-16 flex items-center">
             <div className="max-w-5xl mx-auto w-full">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
@@ -749,9 +824,9 @@ export default function LandingPage() {
           </section>
         </div>
 
-        {/* ── 섹션 5: 후기 ── */}
+        {/* ── 섹션 6: 후기 ── */}
         <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide"
-          ref={el => { sectionRefs.current[5] = el; }}>
+          ref={el => { sectionRefs.current[6] = el; }}>
           <section id="reviews" className="min-h-[100dvh] py-28 px-8 md:px-16 bg-[#FAFAF8] flex items-center">
             <div className="max-w-5xl mx-auto w-full">
               <div className="mb-16">
@@ -780,65 +855,90 @@ export default function LandingPage() {
           </section>
         </div>
 
-        {/* ── 섹션 6: 요금제 ── */}
+        {/* ── 섹션 7: 요금제 ── */}
         <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide"
-          ref={el => { sectionRefs.current[6] = el; }}>
+          ref={el => { sectionRefs.current[7] = el; }}>
           <section id="pricing" className="min-h-[100dvh] py-28 px-8 md:px-16 bg-white border-t border-[#E8E4DC] flex items-center">
             <div className="max-w-4xl mx-auto w-full">
-              <div className="text-center mb-16">
+              <div className="text-center mb-12">
                 <div className="inline-block h-px w-12 bg-[#F0A500] mb-6" />
                 <h2 className="text-4xl md:text-5xl font-black text-[#0B1120]">합리적인 가격</h2>
-                <p className="text-[#9CA3AF] mt-3">9,900원으로 5,000만원짜리 기회를 준비하세요</p>
+                <p className="text-[#9CA3AF] mt-3">9,900원으로 5,000만원짜리 기회를 준비하세요. ROI 5,000배.</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-[#FAFAF8] border border-[#E8E4DC] rounded-3xl p-8">
-                  <p className="text-sm font-bold text-[#9CA3AF] mb-1">Basic</p>
-                  <p className="text-5xl font-black text-[#0B1120] mb-1">9,900<span className="text-2xl font-normal text-[#9CA3AF]">원</span></p>
-                  <p className="text-sm text-[#9CA3AF] mb-8">크레딧 1회</p>
-                  <Link href="/login" className="block w-full py-3.5 border-2 border-[#0B1120] text-[#0B1120] text-sm font-black rounded-2xl text-center hover:bg-[#0B1120] hover:text-white transition-colors mb-8">
-                    Basic으로 시작하기
+              {/* 얼리버드 배너 */}
+              {remaining !== null && remaining > 0 && (
+                <div className="bg-[#0B1120] rounded-2xl px-6 py-4 flex items-center justify-between mb-8">
+                  <div>
+                    <p className="text-[#F0A500] font-black text-sm">얼리버드 🔥 — 선착순 500명 · 3개월 전체 기능 무료</p>
+                    <p className="text-[#8B9AB0] text-xs mt-0.5">잔여 <span className="text-white font-bold">{remaining}자리</span></p>
+                  </div>
+                  <Link href="/login" className="flex-shrink-0 px-5 py-2.5 bg-[#F0A500] text-[#0B1120] text-sm font-black rounded-xl hover:bg-[#f5b530] transition-colors">
+                    무료 시작
                   </Link>
-                  <ul className="space-y-3">
-                    {["9단계 AI 인터뷰 1회", "JTBD 분석표 자동 생성", "사업계획서 생성 1회", "악마의 변호인 1회"].map((item) => (
-                      <li key={item} className="flex items-center gap-3 text-sm text-[#4B5563]">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#F0A500] flex-shrink-0" />
-                        {item}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Starter */}
+                <div className="bg-[#FAFAF8] border border-[#E8E4DC] rounded-3xl p-7">
+                  <p className="text-sm font-bold text-[#9CA3AF] mb-1">Starter</p>
+                  <p className="text-4xl font-black text-[#0B1120] mb-0.5">9,900<span className="text-xl font-normal text-[#9CA3AF]">원</span></p>
+                  <p className="text-xs text-[#9CA3AF] mb-6">3 크레딧</p>
+                  <Link href="/login" className="block w-full py-3 border-2 border-[#0B1120] text-[#0B1120] text-sm font-black rounded-2xl text-center hover:bg-[#0B1120] hover:text-white transition-colors mb-6">
+                    시작하기
+                  </Link>
+                  <ul className="space-y-2">
+                    {["AI 인터뷰 + JTBD 분석", "사업계획서 1회 (2cr)", "악마의 변호인 1회 (1cr)"].map((item) => (
+                      <li key={item} className="flex items-center gap-2 text-xs text-[#4B5563]">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#F0A500] flex-shrink-0" />{item}
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="bg-[#0B1120] rounded-3xl p-8 relative overflow-hidden">
-                  <div className="absolute top-6 right-6 bg-[#F0A500] text-[#0B1120] text-xs font-black px-3 py-1.5 rounded-full">
-                    얼리버드 🔥
-                  </div>
-                  <p className="text-sm font-bold text-[#F0A500] mb-1">Earlybird</p>
-                  <p className="text-5xl font-black text-white mb-1">무료<span className="text-2xl font-normal text-[#8B9AB0]"> / 3개월</span></p>
-                  <p className="text-sm text-[#8B9AB0] mb-8">선착순 500명 한정</p>
-                  <Link href="/login" className="block w-full py-3.5 bg-[#F0A500] text-[#0B1120] text-sm font-black rounded-2xl text-center hover:bg-[#f5b530] transition-colors mb-8">
-                    무료로 시작하기
+                {/* Basic */}
+                <div className="bg-[#FAFAF8] border-2 border-[#0B1120] rounded-3xl p-7 relative">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#0B1120] text-white text-xs font-black px-3 py-1 rounded-full">인기</div>
+                  <p className="text-sm font-bold text-[#9CA3AF] mb-1">Basic</p>
+                  <p className="text-4xl font-black text-[#0B1120] mb-0.5">19,900<span className="text-xl font-normal text-[#9CA3AF]">원</span></p>
+                  <p className="text-xs text-[#9CA3AF] mb-6">8 크레딧</p>
+                  <Link href="/login" className="block w-full py-3 bg-[#0B1120] text-white text-sm font-black rounded-2xl text-center hover:bg-[#1a2540] transition-colors mb-6">
+                    시작하기
                   </Link>
-                  <ul className="space-y-3">
-                    {["9단계 AI 인터뷰 무제한", "JTBD 분석표 무제한", "사업계획서 생성 무제한", "악마의 변호인 무제한", "3개월 전체 기능 이용"].map((item) => (
-                      <li key={item} className="flex items-center gap-3 text-sm text-[#C8D3E0]">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#F0A500] flex-shrink-0" />
-                        {item}
+                  <ul className="space-y-2">
+                    {["AI 인터뷰 + JTBD 분석", "사업계획서 3회 (6cr)", "정부지원사업 매칭 (1cr)", "고객 인터뷰 분석 (1cr)"].map((item) => (
+                      <li key={item} className="flex items-center gap-2 text-xs text-[#4B5563]">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#F0A500] flex-shrink-0" />{item}
                       </li>
                     ))}
                   </ul>
-                  {remaining !== null && (
-                    <p className="text-xs text-[#8B9AB0] mt-6">잔여 <span className="text-[#F0A500] font-bold">{remaining}자리</span></p>
-                  )}
+                </div>
+
+                {/* Pro */}
+                <div className="bg-[#FAFAF8] border border-[#E8E4DC] rounded-3xl p-7">
+                  <p className="text-sm font-bold text-[#9CA3AF] mb-1">Pro</p>
+                  <p className="text-4xl font-black text-[#0B1120] mb-0.5">39,900<span className="text-xl font-normal text-[#9CA3AF]">원</span></p>
+                  <p className="text-xs text-[#9CA3AF] mb-6">20 크레딧</p>
+                  <Link href="/login" className="block w-full py-3 border-2 border-[#0B1120] text-[#0B1120] text-sm font-black rounded-2xl text-center hover:bg-[#0B1120] hover:text-white transition-colors mb-6">
+                    시작하기
+                  </Link>
+                  <ul className="space-y-2">
+                    {["AI 인터뷰 + JTBD 분석", "사업계획서 무제한", "랜딩페이지 카피 (1cr)", "악마의 변호인 무제한", "모든 산출물 포함"].map((item) => (
+                      <li key={item} className="flex items-center gap-2 text-xs text-[#4B5563]">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#F0A500] flex-shrink-0" />{item}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             </div>
           </section>
         </div>
 
-        {/* ── 섹션 7: CTA + 푸터 ── */}
+        {/* ── 섹션 8: CTA + 푸터 ── */}
         <div className="h-[100dvh] overflow-y-auto overscroll-contain scrollbar-hide"
-          ref={el => { sectionRefs.current[7] = el; }}>
+          ref={el => { sectionRefs.current[8] = el; }}>
           <section className="bg-[#0B1120] min-h-[80dvh] py-32 px-8 md:px-16 text-center flex flex-col items-center justify-center">
             <div className="max-w-3xl mx-auto">
               <p className="text-[#F0A500] text-xs font-bold tracking-widest uppercase mb-6">지금 시작하세요</p>
