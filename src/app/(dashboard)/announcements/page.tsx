@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = 'edge';
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { LiveAnnouncement } from "@/app/api/announcements/route";
