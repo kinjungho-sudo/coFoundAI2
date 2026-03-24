@@ -50,17 +50,20 @@ export function validateScore(score: number): number {
 export function getLevel(total: number): ScoreBoard["level"] {
   if (total >= 81) return "excellent";
   if (total >= 61) return "good";
+  if (total >= 31) return "developing";
   return "need_work";
 }
 
 export function getLevelLabel(level: ScoreBoard["level"]): string {
   switch (level) {
     case "excellent":
-      return "정부지원사업 매칭 추천";
+      return "정부지원사업 경쟁력 있는 수준입니다";
     case "good":
-      return "사업계획서 생성 가능";
+      return "사업계획서 작성 가능한 수준입니다";
+    case "developing":
+      return "방향은 맞습니다. 구체화가 필요합니다";
     case "need_work":
-      return "더 구체화가 필요합니다";
+      return "아직 검증이 필요합니다";
   }
 }
 
@@ -70,6 +73,8 @@ export function getLevelColor(level: ScoreBoard["level"]): string {
       return "#4A90D9";
     case "good":
       return "#1D9E75";
+    case "developing":
+      return "#F5A623";
     case "need_work":
       return "#E24B4A";
   }

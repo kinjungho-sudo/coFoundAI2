@@ -69,6 +69,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "JTBD 분석에 실패했습니다." }, { status: 500 });
   }
 
+  // target_name 누락 시 fallback
+  if (!jtbdData.target_name) {
+    jtbdData.target_name = "타겟 고객";
+  }
+
   // outputs 테이블에 저장 (크레딧 차감 없음)
   const { data: output } = await supabase
     .from("outputs")

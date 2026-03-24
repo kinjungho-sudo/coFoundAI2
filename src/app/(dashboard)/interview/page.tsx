@@ -284,7 +284,7 @@ export default function InterviewPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#0F0E17]">
+    <div className="flex flex-col h-[100dvh] bg-[#0F0E17]">
       {/* 헤더 */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-[#2D2B42] bg-[#1A1927]">
         <div className="flex items-center gap-3">
@@ -347,7 +347,7 @@ export default function InterviewPage() {
             ) : (
             <>
               {/* 채팅 메시지 */}
-              <div className="flex-1 overflow-y-auto p-6">
+              <div className="flex-1 overflow-y-auto overscroll-contain p-6">
                 {/* 진행 단계 표시 */}
                 <div className="flex gap-1 mb-6">
                   {Array.from({ length: 9 }, (_, i) => i + 1).map((step) => (
@@ -411,7 +411,7 @@ export default function InterviewPage() {
         </div>
 
         {/* 오른쪽: 점수 대시보드 */}
-        <div className="w-72 border-l border-[#2D2B42] overflow-y-auto">
+        <div className="w-72 border-l border-[#2D2B42] overflow-y-auto overscroll-contain">
           <ScoreDashboard
             scoreBoard={scoreBoard}
             onGeneratePlan={handleGeneratePlan}
@@ -447,9 +447,10 @@ function CompletionPanel({
   }, []);
 
   const levelConfig = {
-    excellent: { label: "탁월한 창업 아이디어", color: "text-[#1D9E75]", border: "border-[#1D9E75]/30", bg: "bg-[#1D9E75]/10" },
-    good: { label: "유망한 창업 아이디어", color: "text-[#534AB7]", border: "border-[#534AB7]/30", bg: "bg-[#534AB7]/10" },
-    need_work: { label: "보완이 필요한 단계", color: "text-[#F5A623]", border: "border-[#F5A623]/30", bg: "bg-[#F5A623]/10" },
+    excellent: { label: "정부지원사업 경쟁력 있는 수준입니다", color: "text-[#1D9E75]", border: "border-[#1D9E75]/30", bg: "bg-[#1D9E75]/10" },
+    good: { label: "사업계획서 작성 가능한 수준입니다", color: "text-[#534AB7]", border: "border-[#534AB7]/30", bg: "bg-[#534AB7]/10" },
+    developing: { label: "방향은 맞습니다. 구체화가 필요합니다", color: "text-[#F5A623]", border: "border-[#F5A623]/30", bg: "bg-[#F5A623]/10" },
+    need_work: { label: "아직 검증이 필요합니다", color: "text-[#E24B4A]", border: "border-[#E24B4A]/30", bg: "bg-[#E24B4A]/10" },
   };
   const cfg = levelConfig[level];
   const dimensions = Object.keys(DIMENSION_LABELS) as ScoreDimension[];
@@ -505,7 +506,9 @@ function CompletionPanel({
 
       {/* JTBD 분석 */}
       <div>
-        <h3 className="text-sm font-semibold text-[#E8E6F0] mb-3">JTBD 분석 — 고객이 진짜 원하는 것</h3>
+        <h3 className="text-sm font-semibold text-[#E8E6F0] mb-3">
+          JTBD 분석 — {jtbdData?.target_name ? `${jtbdData.target_name}의 핵심 과업` : "고객이 진짜 원하는 것"}
+        </h3>
         {isGeneratingJTBD ? (
           <div className="bg-[#1A1927] border border-[#2D2B42] rounded-xl p-6 flex items-center gap-3">
             <div className="flex gap-1">

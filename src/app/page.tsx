@@ -252,9 +252,11 @@ function LiveDemo() {
                   <span className="text-[#4A5568] text-lg mb-1">/100</span>
                 </div>
                 <div className="mt-1">
-                  {totalScore >= 61
-                    ? <span className="text-xs bg-[#F0A500] text-[#0B1120] font-black px-3 py-1 rounded-full">합격 기준 달성 ✓</span>
-                    : <span className="text-xs text-[#8B9AB0]">합격 기준 61점</span>}
+                  {totalScore >= 81
+                    ? <span className="text-xs bg-[#4A90D9] text-white font-black px-3 py-1 rounded-full">정부지원사업 경쟁력 ✓</span>
+                    : totalScore >= 61
+                    ? <span className="text-xs bg-[#F0A500] text-[#0B1120] font-black px-3 py-1 rounded-full">사업계획서 작성 가능 ✓</span>
+                    : <span className="text-xs text-[#8B9AB0]">사업계획서 작성 기준: 61점</span>}
                 </div>
               </div>
               <div className="space-y-3">

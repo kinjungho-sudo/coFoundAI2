@@ -290,7 +290,7 @@ function WritePage() {
      RENDER
   ══════════════════════════════════════════ */
   return (
-    <div className="flex h-screen bg-[#0F0E17] text-[#E8E6F0] overflow-hidden">
+    <div className="flex h-[100dvh] bg-[#0F0E17] text-[#E8E6F0] overflow-hidden">
       {/* ─── LEFT: Chat panel ─── */}
       <div className="w-[400px] flex-shrink-0 flex flex-col border-r border-[#2D2B42]">
         {/* Header */}

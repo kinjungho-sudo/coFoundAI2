@@ -27,7 +27,7 @@ export interface ScoreBoard {
   session_id: string;
   items: Record<ScoreDimension, ScoreItem>;
   total: number; // 0~100
-  level: "need_work" | "good" | "excellent";
+  level: "need_work" | "developing" | "good" | "excellent";
   updated_at: string;
 }
 
@@ -121,6 +121,7 @@ export interface DevilAdvocateResult {
 
 // JTBD 분석 결과
 export interface JTBDAnalysis {
+  target_name: string;      // 타겟 고객명 (예: "40대 치킨집 사장님")
   functional_job: string;   // 기능적 과업
   emotional_job: string;    // 감정적 과업
   social_job: string;       // 사회적 과업
@@ -128,7 +129,7 @@ export interface JTBDAnalysis {
   differentiation_statement: string; // 차별점 문장
 }
 
-// STEP 메타데이터 (9단계)
+// STEP 메타데이터 (9단계 — v5: STEP 3-1 JTBD 발견 포함)
 export const STEP_METADATA: Record<
   number,
   { purpose: string; dimension: ScoreDimension; label: string }
@@ -136,12 +137,12 @@ export const STEP_METADATA: Record<
   1: { purpose: "아이스브레이킹 — 해결하고 싶은 문제 자유롭게 탐색", dimension: "pain_point", label: "문제 탐색" },
   2: { purpose: "한 줄 소개 도출 — 핵심 문제를 한 문장으로 정리", dimension: "pain_point", label: "문제 정의" },
   3: { purpose: "타겟 고객 좁히기 — 핵심 고객 페르소나 구체화", dimension: "target_customer", label: "타겟 고객" },
-  4: { purpose: "핵심 과업(JTBD) 발견 — 기능적·감정적·사회적 과업 분류", dimension: "target_customer", label: "JTBD 발견" },
-  5: { purpose: "페인포인트 검증 — 기존 해결 방식 및 지불 의향 확인", dimension: "pain_point", label: "페인포인트" },
-  6: { purpose: "차별점 발굴 — 10배 더 나은 이유 검증", dimension: "differentiation", label: "차별점" },
-  7: { purpose: "창업자 강점 연결 — 이 문제를 해야 하는 이유", dimension: "founder_fit", label: "창업자 강점" },
-  8: { purpose: "리소스 현황 — 현재 보유 자원 파악", dimension: "feasibility", label: "리소스" },
-  9: { purpose: "다음 1주일 액션 — 이번 주 실행 계획 확정", dimension: "feasibility", label: "다음 액션" },
+  4: { purpose: "핵심 과업(JTBD) 발견 — 기능적·감정적·사회적 과업 3가지 질문으로 분류 (STEP 3-1)", dimension: "target_customer", label: "JTBD 발견" },
+  5: { purpose: "페인포인트 검증 — 기존 해결 방식 및 지불 의향 확인", dimension: "pain_point", label: "페인포인트 검증" },
+  6: { purpose: "차별점 발굴 — 기존 방법 대비 10배 더 나은 이유 검증", dimension: "differentiation", label: "차별점" },
+  7: { purpose: "창업자 강점 연결 — 경력·경험·네트워크와 문제 연결", dimension: "founder_fit", label: "창업자 강점" },
+  8: { purpose: "리소스 현황 — 지금 당장 필요한 것과 보유한 것 파악", dimension: "feasibility", label: "리소스 파악" },
+  9: { purpose: "다음 1주일 액션 — 오늘 대화 기반 이번 주 실행 계획 하나 확정", dimension: "feasibility", label: "다음 액션" },
 };
 
 // API 응답 타입
